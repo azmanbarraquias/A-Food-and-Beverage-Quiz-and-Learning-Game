@@ -16,21 +16,32 @@ public class QuestionManager : MonoBehaviour
     public TextMeshProUGUI asnwerBTMPro;
     public TextMeshProUGUI asnwerCTMPro;
     public TextMeshProUGUI asnwerDTMPro;
-    
+
     [Space]
+    public TextMeshProUGUI questionCountTMPro;
+    [Space]
+    public GameObject[] asnwerButton;
+    private int correctAnswerIndex;
+    public Button fiftyfiftyBtn;
+    public Button livesBtn;
+
+    [Space]
+
     // store the ununansweredQuestions.
     // Static so that when we reload the next scene it will remember the questions...
     private static List<Question> unansweredQuestions;
 
     private Question currentQuestion; //this will store question after get the random question
 
-     // store the correct question
+    // store the correct question
     private int currentNoQestion;
 
+    public GameObject lives;
 
     // Start is called before the first frame update
     void Start()
     {
+        currentNoQestion = questions.Length;
         GetRandomQuestion(); // When start the game we want to load the questions
     }
 
@@ -44,13 +55,14 @@ public class QuestionManager : MonoBehaviour
             unansweredQuestions = questions.ToList<Question>();
         }
 
-       // questionNoInfo.text = (++currentNoQestion) + " / " + questions.Length; // 1++ / totalQuestions
-
         // Get the random question index from list from unansweredQuestions
         int randomQuestionIndex = Random.Range(0, unansweredQuestions.Count);
 
         // lets select the question base on index
         currentQuestion = unansweredQuestions[randomQuestionIndex];
+
+        questionCountTMPro.text = (currentNoQestion--) + " / " + questions.Length; // 1++ / totalQuestions
+
 
         // remove question after set that current question from unansweredQuestion list
         unansweredQuestions.RemoveAt(randomQuestionIndex);
@@ -59,10 +71,9 @@ public class QuestionManager : MonoBehaviour
         questionTMPro.text = currentQuestion.question.question;
 
         asnwerATMPro.text = currentQuestion.question.answerA;
-        asnwerATMPro.text = currentQuestion.question.answerB;
-        asnwerATMPro.text = currentQuestion.question.answerC;
-        asnwerATMPro.text = currentQuestion.question.answerD;
-
+        asnwerBTMPro.text = currentQuestion.question.answerB;
+        asnwerCTMPro.text = currentQuestion.question.answerC;
+        asnwerDTMPro.text = currentQuestion.question.answerD;
     }
     #endregion GetRandomQuestionMethod
 
@@ -71,98 +82,152 @@ public class QuestionManager : MonoBehaviour
     {
         if (currentQuestion.question.asnwerIsA == true)
         {
-            //total++;
 
-            //aSource.Stop();
-            //aSource.clip = correctSound;
-            //aSource.Play();
-            //answer.SetTrigger("Correct");
         }
         else
         {
-            //aSource.Stop();
-            //aSource.clip = wrongSound;
-            //aSource.Play();
-            //answer.SetTrigger("Wrong");
-            //if (correctImgAnswer != null)
-            //{
-            //    correctImgAnswer.sprite = currentQuestion.correctIMG;
-            //}
+            DoubleChanceUI();
+
+            CheckLives();
         }
+        GetRandomQuestion();
     }
 
     public void SelectButtonB()
     {
-        if (currentQuestion.question.asnwerIsA == true)
+        if (currentQuestion.question.asnwerIsB == true)
         {
-            //total++;
 
-            //aSource.Stop();
-            //aSource.clip = correctSound;
-            //aSource.Play();
-            //answer.SetTrigger("Correct");
         }
         else
         {
-            //aSource.Stop();
-            //aSource.clip = wrongSound;
-            //aSource.Play();
-            //answer.SetTrigger("Wrong");
-            //if (correctImgAnswer != null)
-            //{
-            //    correctImgAnswer.sprite = currentQuestion.correctIMG;
-            //}
+            DoubleChanceUI();
+
+            CheckLives();
+
         }
+        if (true)
+        {
+
+        }
+        GetRandomQuestion();
+
     }
 
     public void SelectButtonC()
     {
-        if (currentQuestion.question.asnwerIsA == true)
+        if (currentQuestion.question.asnwerIsC == true)
         {
-            //total++;
 
-            //aSource.Stop();
-            //aSource.clip = correctSound;
-            //aSource.Play();
-            //answer.SetTrigger("Correct");
         }
         else
         {
-            //aSource.Stop();
-            //aSource.clip = wrongSound;
-            //aSource.Play();
-            //answer.SetTrigger("Wrong");
-            //if (correctImgAnswer != null)
-            //{
-            //    correctImgAnswer.sprite = currentQuestion.correctIMG;
-            //}
+            DoubleChanceUI();
+
+            CheckLives();
         }
+        GetRandomQuestion();
+
     }
 
     public void SelectButtonD()
     {
-        if (currentQuestion.question.asnwerIsA == true)
+        if (currentQuestion.question.asnwerIsD == true)
         {
-            //total++;
 
-            //aSource.Stop();
-            //aSource.clip = correctSound;
-            //aSource.Play();
-            //answer.SetTrigger("Correct");
         }
         else
         {
-            //aSource.Stop();
-            //aSource.clip = wrongSound;
-            //aSource.Play();
-            //answer.SetTrigger("Wrong");
-            //if (correctImgAnswer != null)
-            //{
-            //    correctImgAnswer.sprite = currentQuestion.correctIMG;
-            //}
+            DoubleChanceUI();
+
+            CheckLives();
         }
+        GetRandomQuestion();
+
     }
     #endregion Buttons
 
+    void CheckLives()
+    {
+        if (lives.transform.childCount == 1)
+        {
+            //death
+        }
+        else
+        {
+            Destroy(lives.transform.GetChild(0).gameObject);
+        }
+    }
 
+    public void RemoveTwoWrongAnswer()
+    {
+        fiftyfiftyBtn.interactable = false;
+
+        if (currentQuestion.question.asnwerIsA == true)
+        {
+            correctAnswerIndex = 0;
+        }
+        if (currentQuestion.question.asnwerIsB == true)
+        {
+            correctAnswerIndex = 1;
+        }
+        if (currentQuestion.question.asnwerIsC == true)
+        {
+            correctAnswerIndex = 2;
+        }
+        if (currentQuestion.question.asnwerIsD == true)
+        {
+            correctAnswerIndex = 3;
+        }
+
+        for (int i = 0; i < asnwerButton.Length; i++)
+        {
+            if (i == correctAnswerIndex)
+            {
+                continue;
+            }
+
+            asnwerButton[i].GetComponent<Button>().interactable = false;
+        }
+
+        do
+        {
+            int randomIndex = Random.Range(0, 4);
+            if (randomIndex == correctAnswerIndex)
+            {
+                continue;
+            }
+            else
+            {
+                asnwerButton[randomIndex].GetComponent<Button>().interactable = true;
+                break;
+            }
+
+        } while (true);
+
+
+    }
+
+    public void EnableAnswerButton()
+    {
+        foreach (var button in asnwerButton)
+        {
+            button.GetComponent<Button>().interactable = true;
+        }
+    }
+
+    public void DoubleChances()
+    {
+
+    }
+
+    public void DoubleChanceUI()
+    {
+
+    }
+
+    public void LoadDoubleChancesQuestion()
+    {
+
+    }
 }

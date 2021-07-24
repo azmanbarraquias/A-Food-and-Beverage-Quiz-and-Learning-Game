@@ -34,4 +34,10 @@ public class QuestionData
     public string answerD;
     public bool asnwerIsD;
 
+    [Space]
+
+    public int cointEarn = 1;
+
+
+
 }
